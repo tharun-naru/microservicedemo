@@ -1,0 +1,39 @@
+pipeline {
+
+    agent any
+
+    tools {
+        maven 'maven-3.9'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh './jenkins/ci/build.sh'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh './jenkins/ci/test.sh'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Checkout, Build and Test completed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check the failed stage and console output.'
+        }
+    }
+}

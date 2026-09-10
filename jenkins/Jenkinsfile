@@ -4,7 +4,6 @@ pipeline {
 
     tools {
         maven 'maven-3.9'
-        sonarQube 'sonar-scanner'
     }
 
     stages {
@@ -29,7 +28,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {
+                withSonarQubeEnv('sonar-server') {
                     sh './jenkins/ci/sonar.sh'
                 }
             }

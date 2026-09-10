@@ -6,7 +6,7 @@ echo "======================================"
 echo "Starting SonarQube Analysis"
 echo "======================================"
 
-mvn verify sonar:sonar \
+mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
   -Dsonar.projectKey=microservicedemo \
   -Dsonar.projectName=microservicedemo
 

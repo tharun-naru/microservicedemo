@@ -41,9 +41,14 @@ pipeline {
                 }
             }
         }
+    
+	stage('Docker Build') {
+ 	   steps {
+        	sh './jenkins/ci/docker-build.sh'
+              }
+	  }
     }
-
-    post {
+     post {
 
         success {
             echo 'Checkout, Build, Test, SonarQube Analysis and Quality Gate completed successfully.'

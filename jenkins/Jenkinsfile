@@ -4,6 +4,7 @@ pipeline {
 
     tools {
         maven 'maven-3.9'
+  	sonarQube 'sonar-scanner'
     }
 
     stages {
@@ -23,6 +24,22 @@ pipeline {
         stage('Test') {
             steps {
                 sh './jenkins/ci/test.sh'
+            }
+        }
+    }
+	stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh './jenkins/ci/sonar.sh'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
     }

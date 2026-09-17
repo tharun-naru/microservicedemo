@@ -17,6 +17,14 @@ if [ -z "${CHANGED_SERVICES}" ]; then
     exit 0
 fi
 
+echo "======================================"
+echo "Pulling Trivy Image"
+echo "======================================"
+
+docker pull aquasec/trivy:latest
+
+echo "Trivy image pulled successfully."
+
 for SERVICE in ${CHANGED_SERVICES}
 do
 
@@ -26,7 +34,10 @@ do
     echo "Scanning ${IMAGE}"
     echo "======================================"
 
-    trivy image \
+    docker run --rm \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        aquasec/trivy:latest \
+        image \
         --severity HIGH,CRITICAL \
         --exit-code 1 \
         "${IMAGE}"

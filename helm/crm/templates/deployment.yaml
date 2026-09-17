@@ -17,10 +17,20 @@ spec:
       labels:
         app: {{ $service.name }}
     spec:
+      {{- if eq $service.registry "nexus" }}
+      imagePullSecrets:
+        - name: nexus-registry-secret
+      {{- end }}
       terminationGracePeriodSeconds: 30
       containers:
         - name: {{ $service.name }}
-          image: "{{ $.Values.global.imageRegistry }}/{{ $service.image }}:{{ $service.tag }}"
+          {{- if eq $service.registry "nexus" }}
+          image: "{{ $.Values.global.nexusRegistry }}/{{ $service.image }}:{{ $service.tag }}"
+          {{- else if eq $service.registry "ecr" }}
+          image: "{{ $.Values.global.ecrRegistry }}/{{ $service.image }}:{{ $service.tag }}"
+          {{- else }}
+          {{- fail (printf "Unknown registry '%s' for service '%s'" $service.registry $service.name) }}
+          {{- end }}
           imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
 
           {{- if ne $service.name "gateway-service" }}

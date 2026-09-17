@@ -89,6 +89,36 @@ pipeline {
                     }
                 }
             }
+    stage('EKS Authentication') {
+    	steps {
+        	sh './jenkins/cd/eks-auth.sh'
+    	}
+	}
+
+    stage('Helm Deploy') {
+    	steps {
+ 	     withCredentials([
+            usernamePassword(
+                credentialsId: 'nexus-docker',
+                usernameVariable: 'NEXUS_USERNAME',
+                passwordVariable: 'NEXUS_PASSWORD'
+               )
+             ]){
+        	sh './jenkins/cd/helm-deploy.sh'
+    	  }
+	 }
+	}
+    stage('Rollout Status') {
+    	steps {
+        	sh './jenkins/cd/rollout-status.sh'
+    	}
+	}
+
+    stage('Smoke Test') {
+    	steps {
+        	sh './jenkins/cd/smoke-test.sh'
+    	}
+	}
     }
     
   

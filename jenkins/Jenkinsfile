@@ -13,20 +13,33 @@ pipeline {
                 checkout scm
             }
         }
+    stage('Detect Changes') {
+            steps {
+                sh './jenkins/ci/detect-changes.sh'
 
-        stage('Build') {
+                script {
+                    def changes = readProperties file: 'changed-services.properties'
+
+                    env.CHANGED_SERVICES = changes.CHANGED_SERVICES
+
+                    echo "Changed Services: ${env.CHANGED_SERVICES}"
+                }
+            }
+        }
+
+    stage('Build') {
             steps {
                 sh './jenkins/ci/build.sh'
             }
         }
 
-        stage('Test') {
+    stage('Test') {
             steps {
                 sh './jenkins/ci/test.sh'
             }
         }
 
-        stage('SonarQube Analysis') {
+    stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-server') {
                     sh './jenkins/ci/sonar.sh'
@@ -34,7 +47,7 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
+    stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
@@ -42,13 +55,36 @@ pipeline {
             }
         }
     
-	stage('Docker Build') {
+    stage('Docker Build') {
  	   steps {
         	sh './jenkins/ci/docker-build.sh'
               }
 	  }
+    stage('Trivy Image Scan') {
+            steps {
+                sh './jenkins/ci/trivy-scan.sh'
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'nexus-docker',
+                        usernameVariable: 'NEXUS_USERNAME',
+                        passwordVariable: 'NEXUS_PASSWORD'
+                    )
+                ]) {
+
+                        sh './jenkins/ci/push-images.sh'
+                    }
+                }
+            }
     }
-     post {
+    
+  
+  post {
 
         success {
             echo 'Checkout, Build, Test, SonarQube Analysis and Quality Gate completed successfully.'

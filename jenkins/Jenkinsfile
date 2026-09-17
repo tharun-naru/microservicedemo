@@ -21,6 +21,31 @@ pipeline {
                 checkout scm
             }
         }
+    stage('Verify Helm Chart') {
+    steps {
+        sh '''
+            echo "======================================"
+            echo "Jenkins Workspace"
+            echo "======================================"
+            pwd
+
+            echo "======================================"
+            echo "Repository Contents"
+            echo "======================================"
+            ls -la
+
+            echo "======================================"
+            echo "Helm Chart"
+            echo "======================================"
+            ls -la helm/crm
+
+            echo "======================================"
+            echo "Helm Lint"
+            echo "======================================"
+            helm lint helm/crm
+        '''
+    }
+}
     stage('Detect Changes') {
             steps {
                 sh './jenkins/ci/detect-changes.sh'

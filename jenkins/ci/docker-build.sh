@@ -9,20 +9,17 @@ echo "======================================"
 IMAGE_TAG="${GIT_COMMIT:0:7}"
 
 echo "Docker Image Tag: ${IMAGE_TAG}"
+echo "Changed Services: ${CHANGED_SERVICES}"
 
-SERVICES=(
-    "auth-service"
-    "gateway-service"
-    "user-service"
-    "admin-service"
-    "employee-service"
-    "customer-service"
-    "hr-service"
-    "task-service"
-)
+if [ -z "${CHANGED_SERVICES}" ]; then
+    echo "No application services changed."
+    echo "Skipping Docker image build."
+    exit 0
+fi
 
-for SERVICE in "${SERVICES[@]}"
+for SERVICE in ${CHANGED_SERVICES}
 do
+
     echo "======================================"
     echo "Building ${SERVICE}"
     echo "======================================"
@@ -33,10 +30,16 @@ do
         .
 
     echo "${SERVICE}:${IMAGE_TAG} built successfully."
+
 done
 
 echo "======================================"
-echo "All Docker Images Built Successfully"
+echo "Docker Image Build Completed"
 echo "======================================"
 
-docker images
+echo "Built Images:"
+
+for SERVICE in ${CHANGED_SERVICES}
+do
+    echo "${SERVICE}:${IMAGE_TAG}"
+done

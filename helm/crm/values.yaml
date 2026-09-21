@@ -93,8 +93,8 @@ database:
   name: speshway
 
   hikari:
-    maximumPoolSize: 3
-    minimumIdle: 1
-    connectionTimeout: 30000
-    idleTimeout: 600000
-    maxLifetime: 1800000
+    maximumPoolSize: "3"
+    minimumIdle: "1"
+    connectionTimeout: "30000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"

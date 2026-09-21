@@ -91,3 +91,10 @@ database:
   host: speshway-test-crm-test-rds.cxeuyga6q0qq.ap-south-1.rds.amazonaws.com
   port: 3306
   name: speshway
+
+hikari:
+  maximumPoolSize: 3
+  minimumIdle: 1
+  connectionTimeout: 30000
+  idleTimeout: 600000
+  maxLifetime: 1800000

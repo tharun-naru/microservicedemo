@@ -1,7 +1,7 @@
 global:
   imagePullPolicy: IfNotPresent
 
-  nexusRegistry: "speshway-test-shared-alb-971436964.ap-south-1.elb.amazonaws.com:8081/docker-hosted"
+  nexusRegistry: "speshway-test-shared-alb-1055767501.ap-south-1.elb.amazonaws.com:8081/docker-hosted"
 
   ecrRegistry: "179897609830.dkr.ecr.ap-south-1.amazonaws.com"
 

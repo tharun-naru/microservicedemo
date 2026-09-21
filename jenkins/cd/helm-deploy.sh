@@ -8,7 +8,7 @@ echo "======================================"
 CHART_PATH="${WORKSPACE}/helm/crm"
 IMAGE_TAG="${GIT_COMMIT:0:7}"
 
-NEXUS_SERVER="speshway-test-shared-alb-971436964.ap-south-1.elb.amazonaws.com:8081"
+NEXUS_SERVER="speshway-test-shared-alb-1055767501.ap-south-1.elb.amazonaws.com:8081"
 
 echo "Chart Path    : ${CHART_PATH}"
 echo "Image Tag     : ${IMAGE_TAG}"

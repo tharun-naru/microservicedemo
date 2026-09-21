@@ -13,7 +13,7 @@ AWS_ACCOUNT_ID="179897609830"
 
 ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-NEXUS_HOST="speshway-test-shared-alb-971436964.ap-south-1.elb.amazonaws.com:8081"
+NEXUS_HOST="speshway-test-shared-alb-1055767501.ap-south-1.elb.amazonaws.com:8081"
 NEXUS_IMAGE_REGISTRY="${NEXUS_HOST}/docker-hosted"
 
 echo "Image Tag: ${IMAGE_TAG}"

@@ -22,18 +22,45 @@ pipeline {
             }
         }
     stage('Detect Changes') {
-            steps {
-                sh './jenkins/ci/detect-changes.sh'
+    steps {
+        script {
 
-                script {
-                    def changes = readProperties file: 'changed-services.properties'
+            def changedFiles = []
 
-                    env.CHANGED_SERVICES = changes.CHANGED_SERVICES
+            currentBuild.changeSets.each { changeSet ->
 
-                    echo "Changed Services: ${env.CHANGED_SERVICES}"
+                changeSet.items.each { entry ->
+
+                    entry.affectedFiles.each { file ->
+
+                        changedFiles.add(file.path)
+
+                    }
                 }
             }
+
+            writeFile(
+                file: 'changed-files.txt',
+                text: changedFiles.unique().join('\n') + '\n'
+            )
+
+            echo "Changed files:"
+            echo changedFiles.unique().join('\n')
         }
+
+        sh './jenkins/ci/detect-changes.sh'
+
+        script {
+            def changes =
+                readProperties file: 'changed-services.properties'
+
+            env.CHANGED_SERVICES =
+                changes.CHANGED_SERVICES
+
+            echo "Changed Services: ${env.CHANGED_SERVICES}"
+       		 }
+ 	   }
+	}
 
     stage('Build') {
             steps {

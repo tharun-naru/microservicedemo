@@ -3,14 +3,8 @@
 set -e
 
 echo "======================================"
-echo "Detecting Changes"
+echo "Detecting Changed Services"
 echo "======================================"
-
-echo "Current Commit:"
-echo "${GIT_COMMIT}"
-
-echo "Previous Commit:"
-echo "${GIT_PREVIOUS_COMMIT}"
 
 SERVICES=(
     "auth-service"
@@ -23,62 +17,68 @@ SERVICES=(
     "task-service"
 )
 
+CHANGED_SERVICES=""
+
 # ======================================
 # Initial Build
 # ======================================
 
 if [ "${INITIAL_BUILD}" = "true" ]; then
 
-    echo "======================================"
-    echo "Initial Build Requested"
-    echo "======================================"
-
-    echo "No existing application images are assumed."
-    echo "Treating all services as changed."
+    echo "Initial build requested."
+    echo "All services will be built."
 
     CHANGED_SERVICES="${SERVICES[*]}"
 
 else
 
     # ======================================
-    # Normal Change Detection
+    # Read Changed Files
     # ======================================
 
-    if [ -z "${GIT_PREVIOUS_COMMIT}" ]; then
+    if [ ! -f changed-files.txt ]; then
 
-        echo "======================================"
-        echo "No Previous Commit Found"
-        echo "======================================"
+        echo "ERROR: changed-files.txt not found."
+        exit 1
 
-        echo "Treating all services as changed."
+    fi
+
+    echo "======================================"
+    echo "Changed Files"
+    echo "======================================"
+
+    cat changed-files.txt
+
+    # ======================================
+    # Check Common Files
+    # ======================================
+
+    if grep -q '^pom.xml$' changed-files.txt ||
+       grep -q '^common-library/' changed-files.txt; then
+
+        echo "Common Maven files changed."
+        echo "All services must be rebuilt."
 
         CHANGED_SERVICES="${SERVICES[*]}"
 
     else
 
-        CHANGED_FILES=$(git diff --name-only \
-            "${GIT_PREVIOUS_COMMIT}" \
-            "${GIT_COMMIT}")
-
-        echo "======================================"
-        echo "Changed Files"
-        echo "======================================"
-
-        echo "${CHANGED_FILES}"
-
-        CHANGED_SERVICES=""
+        # ======================================
+        # Check Individual Services
+        # ======================================
 
         for SERVICE in "${SERVICES[@]}"
         do
-            if echo "${CHANGED_FILES}" | grep -q "^${SERVICE}/"; then
+
+            if grep -q "^${SERVICE}/" changed-files.txt; then
 
                 CHANGED_SERVICES="${CHANGED_SERVICES} ${SERVICE}"
 
             fi
+
         done
 
     fi
-
 fi
 
 CHANGED_SERVICES=$(echo "${CHANGED_SERVICES}" | xargs)
@@ -89,7 +89,7 @@ echo "======================================"
 
 if [ -z "${CHANGED_SERVICES}" ]; then
 
-    echo "No application service changes detected."
+    echo "No application services changed."
 
 else
 
@@ -101,4 +101,5 @@ echo "======================================"
 echo "Detect Changes Completed"
 echo "======================================"
 
-echo "CHANGED_SERVICES=${CHANGED_SERVICES}" > changed-services.properties
+echo "CHANGED_SERVICES=${CHANGED_SERVICES}" \
+    > changed-services.properties

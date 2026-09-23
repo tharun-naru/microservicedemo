@@ -20,7 +20,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: {{ $service.name }}
-          image: "{{ $.Values.global.ecrRegistry }}/{{ $service.image }}:{{ $service.tag }}"
+          image: "{{ $.Values.global.ecrRegistry }}:{{ $service.image }}-{{ $service.tag }}"
           imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
 
           {{- if ne $service.name "gateway-service" }}

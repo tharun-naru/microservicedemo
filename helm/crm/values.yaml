@@ -68,7 +68,7 @@ services:
   hr:
     name: hr-service
     namespace: hr
-    image: test-hr
+    image: hr-service
     registry: ecr
     tag: qa-001
     port: 8085
@@ -78,7 +78,7 @@ services:
   task:
     name: task-service
     namespace: task
-    image: test-task
+    image: task-service
     registry: ecr
     tag: qa-001
     port: 8089

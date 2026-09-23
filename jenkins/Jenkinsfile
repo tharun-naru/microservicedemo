@@ -85,21 +85,12 @@ pipeline {
             }
         }
 
-        stage('Push Images') {
+    stage('Push Images') {
             steps {
 
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'nexus-docker',
-                        usernameVariable: 'NEXUS_USERNAME',
-                        passwordVariable: 'NEXUS_PASSWORD'
-                    )
-                ]) {
-
-                        sh './jenkins/ci/push-images.sh'
-                    }
-                }
-            }
+                 sh './jenkins/ci/push-images.sh'
+              }
+         }
     stage('EKS Authentication') {
     	steps {
         	sh './jenkins/cd/eks-auth.sh'
@@ -108,17 +99,10 @@ pipeline {
 
     stage('Helm Deploy') {
     	steps {
- 	     withCredentials([
-            usernamePassword(
-                credentialsId: 'nexus-docker',
-                usernameVariable: 'NEXUS_USERNAME',
-                passwordVariable: 'NEXUS_PASSWORD'
-               )
-             ]){
         	sh './jenkins/cd/helm-deploy.sh'
     	  }
 	 }
-	}
+
     stage('Rollout Status') {
     	steps {
         	sh './jenkins/cd/rollout-status.sh'

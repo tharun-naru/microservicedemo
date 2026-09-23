@@ -1,9 +1,7 @@
 global:
   imagePullPolicy: IfNotPresent
 
-  nexusRegistry: "speshway-test-shared-alb-1055767501.ap-south-1.elb.amazonaws.com:8081/docker-hosted"
-
-  ecrRegistry: "179897609830.dkr.ecr.ap-south-1.amazonaws.com"
+  ecrRegistry: "179897609830.dkr.ecr.ap-south-1.amazonaws.com/speshway-test-images"
 
 services:
 
@@ -11,7 +9,7 @@ services:
     name: auth-service
     namespace: auth
     image: auth-service
-    registry: nexus
+    registry: ecr
     tag: qa-001
     port: 8081
     replicas: 1
@@ -21,7 +19,7 @@ services:
     name: gateway-service
     namespace: gateway
     image: gateway-service
-    registry: nexus
+    registry: ecr
     tag: qa-001
     port: 8080
     replicas: 1
@@ -31,7 +29,7 @@ services:
     name: user-service
     namespace: user
     image: user-service
-    registry: nexus
+    registry: ecr
     tag: qa-001
     port: 8082
     replicas: 1
@@ -41,7 +39,7 @@ services:
     name: admin-service
     namespace: admin
     image: admin-service
-    registry: nexus
+    registry: ecr
     tag: qa-001
     port: 8082
     replicas: 1
@@ -51,7 +49,7 @@ services:
     name: employee-service
     namespace: employee
     image: employee-service
-    registry: nexus
+    registry: ecr
     tag: qa-001
     port: 8083
     replicas: 1
@@ -61,7 +59,7 @@ services:
     name: customer-service
     namespace: customer
     image: customer-service
-    registry: nexus
+    registry: ecr
     tag: qa-001
     port: 8084
     replicas: 1

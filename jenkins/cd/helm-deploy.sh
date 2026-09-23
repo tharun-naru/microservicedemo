@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 echo "======================================"
@@ -7,8 +8,6 @@ echo "======================================"
 
 CHART_PATH="${WORKSPACE}/helm/crm"
 IMAGE_TAG="${GIT_COMMIT:0:7}"
-
-NEXUS_SERVER="speshway-test-shared-alb-1055767501.ap-south-1.elb.amazonaws.com:8081"
 
 echo "Chart Path    : ${CHART_PATH}"
 echo "Image Tag     : ${IMAGE_TAG}"
@@ -46,33 +45,7 @@ do
 done
 
 echo "======================================"
-echo "Creating Nexus Image Pull Secrets"
-echo "======================================"
-
-NEXUS_NAMESPACES=(
-    "auth"
-    "gateway"
-    "user"
-    "admin"
-    "employee"
-    "customer"
-)
-
-for NAMESPACE in "${NEXUS_NAMESPACES[@]}"
-do
-    echo "Creating/updating Nexus secret in namespace: ${NAMESPACE}"
-
-    kubectl create secret docker-registry nexus-registry-secret \
-        --namespace "${NAMESPACE}" \
-        --docker-server="${NEXUS_SERVER}" \
-        --docker-username="${NEXUS_USERNAME}" \
-        --docker-password="${NEXUS_PASSWORD}" \
-        --dry-run=client \
-        -o yaml | kubectl apply -f -
-done
-
-echo "======================================"
-echo "Nexus Image Pull Secrets Ready"
+echo "Application Namespaces Ready"
 echo "======================================"
 
 echo "======================================"
@@ -97,9 +70,12 @@ if [ "${INITIAL_BUILD}" = "true" ]; then
 else
 
     if [ -z "${CHANGED_SERVICES}" ]; then
+
         echo "No application services changed."
         echo "Skipping Helm deployment."
+
         exit 0
+
     fi
 
     echo "Existing deployment detected."
@@ -155,6 +131,7 @@ else
     helm upgrade crm "${CHART_PATH}" \
         --reuse-values \
         "${HELM_ARGS[@]}"
+
 fi
 
 echo "======================================"

@@ -68,7 +68,7 @@ services:
   hr:
     name: hr-service
     namespace: hr
-    image: speshway-test-hr
+    image: test-hr
     registry: ecr
     tag: qa-001
     port: 8085
@@ -78,7 +78,7 @@ services:
   task:
     name: task-service
     namespace: task
-    image: speshway-test-task
+    image: test-task
     registry: ecr
     tag: qa-001
     port: 8089

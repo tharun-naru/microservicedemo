@@ -1,14 +1,6 @@
 pipeline {
 
     agent any
-    
-    parameters {
-        booleanParam(
-            name: 'INITIAL_BUILD',
-            defaultValue: false,
-            description: 'Build and push all microservice images for the initial deployment'
-        )
-    }
 
     tools {
         maven 'maven-3.9'
